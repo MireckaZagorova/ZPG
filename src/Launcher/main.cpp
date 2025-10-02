@@ -13,26 +13,13 @@
 #include <stdio.h>
 
 
-int rotationDirection = 1;				// globální proměnná -> 1 = po směru hod. ruč., -1 = proti směru hod. ruč. 
-const float pivotX = -0.6f;
-const float pivotY = -0.6f;
-
 
 static void error_callback(int error, const char* description) { fputs(description, stderr); }
 
-//FUNKCE KEY_CALLBACK - VOLÁ SE PŘI JAKÉMKOLIV STISKU/PUŠTĚNÍ KLÁVESY
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-
-	// při stisku klávesy mezerník dojde ke změně směru
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-	{
-		rotationDirection = -rotationDirection; // otočí směr rotace
-		printf("Smer rotace byl zmenen! Nyni = %d \n", rotationDirection);
-	}
-
 	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
 }
 
@@ -50,6 +37,7 @@ static void cursor_callback(GLFWwindow* window, double x, double y) { printf("cu
 static void button_callback(GLFWwindow* window, int button, int action, int mode) {
 	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
 }
+
 
 
 //GLM test
@@ -114,44 +102,18 @@ int main(void)
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+		glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
 
-		//ROTACE - ZMĚNA Z ROTACE JEDNÍM SMĚREM NA MĚNÍCÍ SE ROTACI POMOCÍ TLAČÍTKA
-		//rotace navázaná na čas - jde pouze jedním směrem
-		//glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-
-		static float angle = 0.f;					//úhel
-		angle += rotationDirection * 0.5f;			// rychlost 0,5 stupně za frame
-
-		glTranslatef(pivotX, pivotY, 0.0f);			//posune střed do bodu pivot
-
-		glRotatef(angle, 0.f, 0.f, 1.f);			// směr rotace kolem osy Z
-		//glRotatef(angle, 0.f, 1.f, 0.f);			// směr rotace kolem osy Y
-		//glRotatef(angle, 1.f, 0.f, 0.f);			// směr rotace kolem osy X
-
-		glTranslatef(-pivotX, -pivotY, 0.0f);		// posune střed zpátky
-
-
-
-		glBegin(GL_TRIANGLES);						// vykresleni trojuhelnikku
-		glColor3f(1.f, 0.f, 0.f);					// barva rohu 1
-		glVertex3f(-0.6f, -0.6f, 0.f);				// roh A
-		glColor3f(0.f, 1.f, 0.f);					// barva rohu 2
-		glVertex3f(0.6f, -0.6f, 0.f);				// roh B
-		glColor3f(0.f, 0.f, 1.f);					// barva rohu 3
-		glVertex3f(-0.6f, 0.6f, 0.f);				// roh D
-//		glEnd();				
-
-//		glBegin(GL_TRIANGLES);						// vykresleni trojuhelnikku
-		glColor3f(0.f, 1.f, 0.f);					// barva rohu 1
-		glVertex3f(0.6f, -0.6f, 0.f);				// roh B 
-		glColor3f(1.f, 1.f, 0.f);					// barva rohu 2
-		glVertex3f(0.6f, 0.6f, 0.f);				// roh C
-		glColor3f(0.f, 0.f, 1.f);					// barva rohu 3
-		glVertex3f(-0.6f, 0.6f, 0.f);				// roh D
+		glBegin(GL_TRIANGLES);
+		glColor3f(1.f, 0.f, 0.f);
+		glVertex3f(-0.6f, -0.4f, 0.f);
+		glColor3f(0.f, 1.f, 0.f);
+		glVertex3f(0.6f, -0.4f, 0.f);
+		glColor3f(0.f, 0.f, 1.f);
+		glVertex3f(0.f, 0.6f, 0.f);
 		glEnd();
-		
 		glfwSwapBuffers(window);
-
+		
 		glfwPollEvents();
 	}
 	glfwDestroyWindow(window);
