@@ -137,13 +137,6 @@
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Cvičení\Cvičení 3\Models\Models\bushes.h" />
-    <ClInclude Include="..\..\..\Cvičení\Cvičení 3\Models\Models\gift.h" />
-    <ClInclude Include="..\..\..\Cvičení\Cvičení 3\Models\Models\plain.h" />
-    <ClInclude Include="..\..\..\Cvičení\Cvičení 3\Models\Models\sphere.h" />
-    <ClInclude Include="..\..\..\Cvičení\Cvičení 3\Models\Models\suzi_flat.h" />
-    <ClInclude Include="..\..\..\Cvičení\Cvičení 3\Models\Models\suzi_smooth.h" />
-    <ClInclude Include="..\..\..\Cvičení\Cvičení 3\Models\Models\tree.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
