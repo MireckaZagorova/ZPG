@@ -13,25 +13,29 @@ using namespace std;
 
  */
 
-Shader::Shader(const char* vertexSrc, const char* fragmentSrc) {
+Shader::Shader(const char* vertexSrc, const char* fragmentSrc) {            // viz prezentace è. 2 - strana 16
     // Vytvoøení vertex shaderu
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexSrc, NULL);
-    glCompileShader(vertexShader);
-    checkCompileErrors(vertexShader, "VERTEX");
+    checkCompileErrors(vertexShader, "VERTEX");                             // Podle typu pozná, co má zkontrolovat (typy - VERTEX, FRAGMENT nebo PROGRAM
+    glCompileShader(vertexShader);                                          // TOTO a 
+
 
     // Vytvoøení fragment shaderu
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentSrc, NULL);
-    glCompileShader(fragmentShader);
-    checkCompileErrors(fragmentShader, "FRAGMENT");
+    checkCompileErrors(fragmentShader, "FRAGMENT");                         // Podle typu pozná, co má zkontrolovat (typy - VERTEX, FRAGMENT nebo PROGRAM
+    glCompileShader(fragmentShader);                                        // TOTO - komplilace shaderu - pobìhlo bez chyb? 
 
-    // Vytvoøení shader programu
-    programID = glCreateProgram();
-    glAttachShader(programID, vertexShader);
-    glAttachShader(programID, fragmentShader);
-    glLinkProgram(programID);
-    checkCompileErrors(programID, "PROGRAM");
+    // Vytvoøení shader programu - zde se to "slepí"
+    programID = glCreateProgram();                                          // Vytvoøí prázdný program na grafické kartì (krabièka, do které se vkládá)
+    //Tímto se XXXX (vertexShader nebo fragmentShader´) vloží do programu
+    glAttachShader(programID, vertexShader);                                // vertex je ten, který øíká "kde se kadá bod objekt má vykreslt 
+    glAttachShader(programID, fragmentShader);                              // fragment shader - ! øeší barvu, bude mít každý pixel?"
+    // kontrola, jestli se program správnì "linknul"7
+    glLinkProgram(programID);                                               // spojí - "linkne"  shadery dohromady                             
+    checkCompileErrors(programID, "PROGRAM");                               // kontrola pøi linkování - viz dole implementace metody
+
 
     // Shadery už nepotøebujeme, mùžeme je smazat
     glDeleteShader(vertexShader);
@@ -42,27 +46,29 @@ Shader::~Shader() {
     glDeleteProgram(programID);
 }
 
-void Shader::use() const {
+void Shader::use() const {                                                  // zkrácena cesta k glUseProgra(programID) - kdykoliv chceme aktivovat shader, staèí zavolat
+                                                                            //      shader->use/ú
     glUseProgram(programID);
 }
 
-GLuint Shader::getProgramID() const {
+GLuint Shader::getProgramID() const {                                       // vrací èíslo programu
     return programID;
 }
 
+//*********************************************** Kontrola vzniku a linknutí shaderu/shader programu
 void Shader::checkCompileErrors(GLuint shader, const string& type) {
     GLint success;
     GLchar infoLog[1024];
 
     if (type != "PROGRAM") {
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);                 // naète informace o shaderu    GL_COMPILE_STATUS - zda shader prošel kompilací 
         if (!success) {
-            glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+            glGetShaderInfoLog(shader, 1024, NULL, infoLog);                // naète chybovou hlášku linkeru do do infoLog
             cerr << "Shader Compilation Error (" << type << "):\n" << infoLog << endl;
         }
     }
     else {
-        glGetProgramiv(shader, GL_LINK_STATUS, &success);
+        glGetProgramiv(shader, GL_LINK_STATUS, &success);                   // naète informace o shaderu    G_LINK_STATUS - zda se shadery správnì spojily do programu
         if (!success) {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
             cerr << "Program Linking Error (" << type << "):\n" << infoLog << endl;
