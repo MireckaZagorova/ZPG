@@ -138,8 +138,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="bushes.h" />
+    <ClInclude Include="gift.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="plain.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="sphere.h" />
+    <ClInclude Include="suzi_flat.h" />
+    <ClInclude Include="suzi_smooth.h" />
+    <ClInclude Include="tree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
