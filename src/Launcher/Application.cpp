@@ -1,8 +1,10 @@
 #include "Application.h"
 #include "Shader.h"
 #include <iostream>
+#include "sphere.h"
 
 using namespace std;
+
 
 
 // ****************************** SHADERY
@@ -43,12 +45,16 @@ const char* fragment_shader_pos =
 
 
 // ****************************** Konstruktor a Destruktor
-Application::Application() : window(nullptr), triangleShader(nullptr), squareShader(nullptr) {}     // NULPTR - žádný ukazatel (místo null nebo 0) - typovì bezpeèný
+Application::Application() : window(nullptr), triangleShader(nullptr), squareShader(nullptr), cv3Shader(nullptr) 
+{}     
+// NULLPTR - žádný ukazatel (místo null nebo 0) - typovì bezpeèný
 
 Application::~Application() 
 {
     if (triangleShader) delete triangleShader;
     if (squareShader) delete squareShader;
+    if (cv3Shader) delete cv3Shader;
+    if (sphereShader) delete sphereShader;
 
     if (window) 
     {
@@ -108,6 +114,9 @@ void Application::createShaders()
 {
     triangleShader = new Shader(vertex_shader_purple, fragment_shader_purple);
     squareShader = new Shader(vertex_shader_pos, fragment_shader_pos);
+    cv3Shader = new Shader(vertex_shader_pos, fragment_shader_pos);
+    sphereShader = new Shader(vertex_shader_purple, fragment_shader_purple);
+
 }
 
 // ****************************** Vytvoøení modelù / VAO / VBO
@@ -157,6 +166,49 @@ void Application::createModels()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
     glBindVertexArray(0);
+
+    // ------------ Nìjaký nový tvar, ještì nevím jaký - otoèená trojùhelník s pravoúhlým rohem vlevo nahoøe
+
+    const float a[] = {
+     -.5f, -.5f, .5f,  0, 0, 1,
+     -.5f, .5f, .5f,  0, 0, 1,
+       .5f, .5f, .5f,  0, 0, 1 };
+
+    // pøidejte další atribut 
+    //GLuint VAO, VBO;
+    glGenVertexArrays(1, &VAO_cv3);
+    glGenBuffers(1, &VBO_cv3);
+
+    glBindVertexArray(VAO_cv3);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_cv3);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(a), a, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+
+    // ------------ Sphere
+
+    glGenVertexArrays(1, &VAO_sphere);
+    glGenBuffers(1, &VBO_sphere);
+
+    glBindVertexArray(VAO_sphere);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_sphere);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sphere), sphere, GL_STATIC_DRAW);
+
+    // pozice
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+
+    // normála
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    glBindVertexArray(0);
+
+
+
 }
 
 // ****************************** Hlavní smyèka vykreslování
@@ -166,17 +218,17 @@ void Application::run()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Trojúhelník
-        triangleShader->use();
-        glBindVertexArray(VAO_triangle);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //Cvièení 2 
+        //cviceni2();
 
-        // Ètverec
-        squareShader->use();
-        glBindVertexArray(VAO_square);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //Cvièení 3
+        //cv3_triangle();           // trojúhelník 
 
-        glfwSwapBuffers(window);
+        cv3_sphere();
+        
+
+
+        glfwSwapBuffers(window);                // prohodí ("swapne") obrazové buffery -> øíká nìco jako "Všechno co jsem teï nakreslil, ukaž na obrazovku"
         glfwPollEvents();
     }
 }
@@ -193,4 +245,36 @@ void Application::info()
     int major, minor, rev;
     glfwGetVersion(&major, &minor, &rev);
     cout << "Using GLFW " << major << "." << minor << "." << rev << endl;
+}
+
+void Application::cviceni2() 
+{
+    // Trojúhelník
+    triangleShader->use();
+    glBindVertexArray(VAO_triangle);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Ètverec
+    squareShader->use();
+    glBindVertexArray(VAO_square);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Application::cv3_triangle() 
+{
+    cv3Shader->use();
+    glBindVertexArray(VAO_cv3);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
+}
+
+void Application::cv3_sphere()
+{
+    glDisable(GL_DEPTH_TEST);
+    sphereShader->use();
+    glBindVertexArray(VAO_sphere);
+    glDrawArrays(GL_TRIANGLES, 0, 2880);
+    glBindVertexArray(0);
+
+    // !!!!!! sphere má velikost sphere[17280] -> jeden vrchol potøebuje 6  floatù (3x souøadnice, 3x barva) -> 17280/6 = 2880 
 }

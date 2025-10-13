@@ -17,15 +17,17 @@ Shader::Shader(const char* vertexSrc, const char* fragmentSrc) {            // v
     // Vytvoøení vertex shaderu
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexSrc, NULL);
-    checkCompileErrors(vertexShader, "VERTEX");                             // Podle typu pozná, co má zkontrolovat (typy - VERTEX, FRAGMENT nebo PROGRAM
     glCompileShader(vertexShader);                                          // TOTO a 
+    checkCompileErrors(vertexShader, "VERTEX");                             // Podle typu pozná, co má zkontrolovat (typy - VERTEX, FRAGMENT nebo PROGRAM
+    
 
 
     // Vytvoøení fragment shaderu
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentSrc, NULL);
-    checkCompileErrors(fragmentShader, "FRAGMENT");                         // Podle typu pozná, co má zkontrolovat (typy - VERTEX, FRAGMENT nebo PROGRAM
     glCompileShader(fragmentShader);                                        // TOTO - komplilace shaderu - pobìhlo bez chyb? 
+    checkCompileErrors(fragmentShader, "FRAGMENT");                         // Podle typu pozná, co má zkontrolovat (typy - VERTEX, FRAGMENT nebo PROGRAM
+    
 
     // Vytvoøení shader programu - zde se to "slepí"
     programID = glCreateProgram();                                          // Vytvoøí prázdný program na grafické kartì (krabièka, do které se vkládá)
