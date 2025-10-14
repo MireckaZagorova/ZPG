@@ -20,6 +20,7 @@ public:
     void cviceni2();
     void cv3_triangle();
     void cv3_sphere();
+    void cv3_trans();
 
 private:
     GLFWwindow* window;
@@ -38,4 +39,5 @@ private:
     // cvièení 3 - koule 
     GLuint VAO_sphere, VBO_sphere;
     Shader* sphereShader;
+    Shader* sphereTransShader;
 };
