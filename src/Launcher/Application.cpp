@@ -64,21 +64,6 @@ const char* getVertexShaderFlat() {
     )";
 }
 
-// Zde pùvodní vzhled pøed zabalením do funkcí !!! 
-/*
-const char* vertex_shader_trans =
-"#version 330 core\n"
-"layout(location=0) in vec3 vp;\n"                          // pozice vrcholu
-"layout(location=1) in vec3 normal;\n"                      // normála
-"uniform mat4 modelMatrix;\n"                               // uniformní matice
-"out vec3 Normal;\n"                                        // vyhlazené normály posíláme do fragment shader
-"void main() {\n"
-"    gl_Position = modelMatrix * vec4(vp, 1.0);\n"          // transformace vrcholu  !!! POØADÍ JE DÙLEŽITÉ !!!
-"    Normal = normal;\n"                                    // zachování normály
-"}";
-
-*/
-
 const char* vertex_shader_trans() {
     return R"(
         #version 330 core
@@ -174,8 +159,8 @@ Application::~Application()
 
     if (window) 
     {
-        glfwDestroyWindow(window);                   // nejdøíve se zniøí okno 
-        glfwTerminate();                             // ukonèí se celá knihovna -> uvolnìní všech zdrojù
+        glfwDestroyWindow(window);                    
+        glfwTerminate();                             
     }
 }
 
@@ -184,17 +169,13 @@ Application::~Application()
 // *************************************************** Inicializace OpenGL / GLFW / GLEW / viewport
 void Application::initialization() 
 {
-    // Nastavení callbacku pro chyby GLFW - øíkáme "kdykoliv nastavne chyba, zavolej tuhle funkci"
     glfwSetErrorCallback([](int error, const char* description) 
     {
-        fputs(description, stderr);                 // Vypíše chybovou zprávu do standardního chybového výstupu (stderr)
+        fputs(description, stderr);    
     });
 
-    // Inicializace GLFW
-    /*
-        GLFW - usnadòuje práci s okny, vstupy a kontextem OpenGL
-    */
-    if (!glfwInit())                                // glfwInit - spouští knihovnu)
+
+    if (!glfwInit())                               
     {
         cerr << "ERROR: could not start GLFW3" << endl;
         exit(EXIT_FAILURE);
@@ -204,27 +185,24 @@ void Application::initialization()
     window = glfwCreateWindow(800, 600, "Mireccino dilo", NULL, NULL);
     if (!window) 
     {
-        glfwTerminate();                            // ukonèí GLFW a uvolní všechny zdroje, které vytvoøilo
-        exit(EXIT_FAILURE);                         // okamžitì ukonèí program s informací, že nastala chyba
+        glfwTerminate();                            
+        exit(EXIT_FAILURE);                         
     }
 
-    glfwMakeContextCurrent(window);                 // Vytvoøí kontext = prostøedí, kde se drží všechna nastavení (shadery, textury, buffer objekty,...)
-                                                    // Øíká, že právì toto okno (window) bude mít aktivní OpenGL kontext - bez toho by se nedalo vykreslovat, protože by nevìdìlo kam :-) 
-    glfwSwapInterval(1);                            // Nìjaká V-Sync synchronizace - zajistí hladké vykreslování synchronizované s monitorem
+    glfwMakeContextCurrent(window);              
+                                                   
+    glfwSwapInterval(1);                           
 
-    // Start GLEW
-    // GLEW je knihovna, která umožòuje používat modelní OpenGL funkce
-    glewExperimental = GL_TRUE;                     // Povoluje tyto funkce
-    if (glewInit() != GLEW_OK)                      // Kontrola
+    glewExperimental = GL_TRUE;                     
+    if (glewInit() != GLEW_OK)                     
     {
         cerr << "Failed to initialize GLEW" << endl;
         exit(EXIT_FAILURE);
     }
 
-    // Vykreslovací oblast
     int width, height;
-    glfwGetFramebufferSize(window, &width, &height);// Zjistískuteèná pixelový rozmìr okna
-    glViewport(0, 0, width, height);                // nastaví oblast, kam se kreslí (obvykle celé okno)
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);            
 }
 
 // *************************************************** Vytvoøení shaderù
@@ -234,7 +212,6 @@ void Application::createShaders()
     squareShader = new Shader(getVertexShaderPos(), getFragmentShaderPos());
     cv3Shader = new Shader(getVertexShaderPos(), getFragmentShaderPos());
     sphereShader = new Shader(getVertexShaderNormalColor(), getFragmentShaderNormalColor());
-    //sphereShader = new Shader(getVertexShaderFlat(), getFragmentShaderFlat());
     sphereTransShader = new Shader(vertex_shader_trans(), getFragmentShaderTrans());
 
 }
@@ -249,36 +226,16 @@ void Application::createModels()
        -0.5f, -0.5f, 0.0f
     };
 
-    //glGenVertexArrays(1, &VAO_triangle);                                            // -> VertexArrayObject -
     vao_triangle = new VertexArrayObject();                 
     vao_triangle->Bind();
-    //glGenBuffers(1, &VBO_triangle);
-
 
     modelTriangle = new Model(vao_triangle, 3);
     modelSquare = new Model(vao_square, 6);
 
-
-    //glBindVertexArray(VAO_triangle);                                                // -> VertexBufferObject
-    //glBindBuffer(GL_ARRAY_BUFFER, VBO_triangle);                                    // -> VertexBufferObject
-
     vbo_triangle = new VertexBufferObject();
     vbo_triangle->Bind();
-
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
     vbo_triangle->SetData(points, sizeof(points));
-
-    //glEnableVertexAttribArray(0);                                                   // -> VertexArrayObject - AddAttribute
-    //   index, size, type, normalize, stride, offset
-
-    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);   // -> VertexArrayObject - AddAttribute
-    //   index - tohle je pozice/normála
-    //   size - 3 = xyz, 2=uv, 4 = rgba
-    //   stride - jak daleko je dalsi vertex v bufferech
-    //   offset - kde v daném vertexu zaèíná tenhle atribut
-
     vao_triangle->AddAttribute(0, 3, 3 * sizeof(float), (void*)0);
-    // èerná obrazovka -> špatný stride/offset nebo chybí Bind
 
     glBindVertexArray(0);
 
@@ -293,29 +250,16 @@ void Application::createModels()
         0.6f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f
     };
 
-    //glGenVertexArrays(1, &VAO_square);
-    //glGenBuffers(1, &VBO_square);
     vao_square = new VertexArrayObject();
     vao_square->Bind();
 
     vbo_square = new VertexBufferObject();
     vbo_square->Bind();
-
-    //glBindVertexArray(VAO_square);
-    //glBindBuffer(GL_ARRAY_BUFFER, VBO_square);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(points2), points2, GL_STATIC_DRAW);
     vbo_square->SetData(points2, sizeof(points2));
-
-    //glEnableVertexAttribArray(0);
-    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     vao_square->AddAttribute(0, 3, 6 * sizeof(float), (void*)0);
-
-    //glEnableVertexAttribArray(1);
-    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     vao_square->AddAttribute(1, 3, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
     modelSquare = new Model(vao_square, 6);
-
     glBindVertexArray(0);
 
 
@@ -327,68 +271,24 @@ void Application::createModels()
      -.5f, .5f, .5f,  0, 0, 1,
        .5f, .5f, .5f,  0, 0, 1 };
 
-    // pøidejte další atribut 
-    //GLuint VAO, VBO;
-
-    //glGenVertexArrays(1, &VAO_cv3);
-    //glGenBuffers(1, &VBO_cv3);
     vao_cv3 = new VertexArrayObject();
     vao_cv3->Bind();
-
     vbo_cv3 = new VertexBufferObject();
     vbo_cv3->Bind();
-
-    //glBindVertexArray(VAO_cv3);
-    //glBindBuffer(GL_ARRAY_BUFFER, VBO_cv3);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(a), a, GL_STATIC_DRAW);
     vbo_cv3->SetData(a, sizeof(a));
-
-    //glEnableVertexAttribArray(0);
-    //glEnableVertexAttribArray(1);
-    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0);
-    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
-
     vao_cv3->AddAttribute(0, 3, 6 * sizeof(float), (GLvoid*)0);
     vao_cv3->AddAttribute(1, 3, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
-    //glBindVertexArray(0);
 
     // ------------ Sphere
-
-    //glGenVertexArrays(1, &VAO_sphere);
-    //glGenBuffers(1, &VBO_sphere);
-
-    //glBindVertexArray(VAO_sphere);
-    //glBindBuffer(GL_ARRAY_BUFFER, VBO_sphere);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(sphere), sphere, GL_STATIC_DRAW);
-
-    // pozice
-    //glEnableVertexAttribArray(0);
-    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-
-    // normála
-    //glEnableVertexAttribArray(1);
-    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-
     vao_sphere = new VertexArrayObject();
     vao_sphere->Bind();
-
     vbo_sphere = new VertexBufferObject();
     vbo_sphere->Bind();
-
     vbo_sphere->SetData(sphere, sizeof(sphere));
-
-    // pozice
     vao_sphere->AddAttribute(0, 3, 6 * sizeof(float), (void*)0);
-    // normála
     vao_sphere->AddAttribute(1, 3, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
     modelSphere = new Model(vao_sphere, 2880);
-
-    //glBindVertexArray(0);
-
-    //bílá koule? -> barva = normála 
-    
-
 }
 
 
@@ -400,7 +300,7 @@ void Application::run()
     while (!glfwWindowShouldClose(window)) 
     {
 
-        glEnable(GL_DEPTH_TEST);              // zapne "vyhlazení" koule - nejsou trojúhelníèky, ale vyhlazené 
+        glEnable(GL_DEPTH_TEST);             
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -412,7 +312,7 @@ void Application::run()
         //cv3_sphere();
         cv3_trans();
 
-        glfwSwapBuffers(window);                // prohodí ("swapne") obrazové buffery -> øíká nìco jako "Všechno co jsem teï nakreslil, ukaž na obrazovku"
+        glfwSwapBuffers(window);                
         glfwPollEvents();
     }
 }
@@ -436,25 +336,8 @@ void Application::info()
 
 void Application::cviceni2() 
 {
-    /*
-    // Trojúhelník
-    triangleShader->use();
-    //glBindVertexArray(VAO_triangle);
-    vao_triangle->Bind();
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    */
-
     triangleShader->use();
     modelTriangle->Draw();
-
-
-    /*
-    // Ètverec
-    squareShader->use();
-    //glBindVertexArray(VAO_square);
-    vao_square->Bind();
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    */
 
     squareShader->use();
     modelSquare->Draw();
@@ -462,14 +345,6 @@ void Application::cviceni2()
 
 void Application::cv3_triangle() 
 {
-    /*
-    cv3Shader->use();
-    //glBindVertexArray(VAO_cv3);
-    vao_cv3->Bind();
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    //glBindVertexArray(0);
-    */
-
     cv3Shader->use();
     modelTriangle->Draw();
 
@@ -477,17 +352,6 @@ void Application::cv3_triangle()
 
 void Application::cv3_sphere()
 {
-    /*
-    //glDisable(GL_DEPTH_TEST);                                 // dìlá ètvereèky 
-    //glEnable(GL_DEPTH_TEST);                                    // dìlá trojúhelníèky
-    sphereShader->use();
-    //glBindVertexArray(VAO_sphere);
-    vao_sphere->Bind();
-    glDrawArrays(GL_TRIANGLES, 0, 2880);
-    //glBindVertexArray(0);
-
-    // !!!!!! sphere má velikost sphere[17280] -> jeden vrchol potøebuje 6  floatù (3x souøadnice, 3x barva) -> 17280/6 = 2880 
-    */
     sphereShader->use();
     modelSphere->Draw();
 }
@@ -497,32 +361,16 @@ void Application::cv3_trans()
     sphereTransShader->use();
 
     float timeValue = glfwGetTime();
-    float angle = timeValue;  // rotuje podle èasu
-    float myView = -2.0f;     // posun dopøedu/dozadu
+    float angle = timeValue;
+    float myView = -2.0f;     
 
-    // Výpoèet transformaèní matice (rotace, posun, mìøítko)
-    glm::mat4 M = glm::mat4(1.0f);                                      // jednotková matice
-    M = glm::translate(M, glm::vec3(0.0f, 0.0f, 0.0f));                 // posun od kamery
-    //M = glm::translate(M, glm::vec3(sin(timeValue), 0.0f, -2.0f));
-    M = glm::rotate(M, angle, glm::vec3(0.0f, 1.0f, 0.0f));             // otoèení kolem osy Y
-    M = glm::rotate(M, angle * 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));      // mírné naklonìní
-    M = glm::scale(M, glm::vec3(0.5f));                                 // velikost
+   
+    glm::mat4 M = glm::mat4(1.0f);                                      
+    M = glm::translate(M, glm::vec3(0.0f, 0.0f, 0.0f));                 
+    M = glm::rotate(M, angle, glm::vec3(0.0f, 1.0f, 0.0f));           
+    M = glm::rotate(M, angle * 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));   
+    M = glm::scale(M, glm::vec3(0.5f));                                
 
-    /*// Pošli matici do shaderu
-    GLuint modelLoc = glGetUniformLocation(sphereTransShader->getProgramID(), "modelMatrix");
-    if (modelLoc == -1)
-        std::cerr << "modelMatrix not found in shader!" << std::endl;
-    // posílá matici do shaderu
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(M));
-    */
     sphereTransShader->SetMatrix4("modelMatrix", M);
-
-
-    // Vykreslení koule
-    //glBindVertexArray(VAO_sphere);
-    //vao_sphere->Bind();
-    //glDrawArrays(GL_TRIANGLES, 0, 2880);
-    //glBindVertexArray(0);
-
     modelSphere->Draw();
 }

@@ -29,14 +29,8 @@ private:
     GLFWwindow* window;
 
     // cvièení 2
-    //GLuint VAO_triangle;
-    //GLuint VBO_triangle;
-    //GLuint VAO_square;
-    //GLuint VBO_square;
-
     VertexArrayObject* vao_triangle;
     VertexBufferObject* vbo_triangle;
-
     VertexArrayObject* vao_square;
     VertexBufferObject* vbo_square;
 
@@ -45,13 +39,11 @@ private:
     Shader* squareShader;
 
     // cvièení 3
-    //GLuint VAO_cv3, VBO_cv3;
     VertexArrayObject* vao_cv3;
     VertexBufferObject* vbo_cv3;
     Shader* cv3Shader;
 
     // cvièení 3 - koule 
-    //GLuint VAO_sphere, VBO_sphere;
     VertexArrayObject* vao_sphere;
     VertexBufferObject* vbo_sphere;
     Shader* sphereShader;
