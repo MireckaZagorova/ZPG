@@ -1,7 +1,21 @@
+// Model.h
 #pragma once
 #include <GL/glew.h>
-#include <vector>
+#include "VertexArrayObject.h"
+//#include <vector>
 
+class Model
+{
+public:
+    Model(VertexArrayObject* vao, int vertexCount);
+    void Draw() const;
+private:
+    VertexArrayObject* vao;
+    int vertexCount;
+};
+
+
+/*
 class Model {
 public:
     Model();
@@ -19,4 +33,4 @@ private:
 
     GLsizei vertexCount;  // poèet vrcholù
     int vertexSize;       // velikost jednoho vrcholu v float
-};
+};*/

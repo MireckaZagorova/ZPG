@@ -1,4 +1,6 @@
 #include "Shader.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
 /*
@@ -77,3 +79,13 @@ void Shader::checkCompileErrors(GLuint shader, const string& type) {
         }
     }
 }
+
+
+void Shader::SetMatrix4(const char* name, const glm::mat4& matrix)
+{
+    GLuint loc = glGetUniformLocation(programID, name);
+    if (loc == -1)
+        std::cerr << "modelMatrix not found in shader!" << std::endl;
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+

@@ -1,7 +1,25 @@
+#pragma once
 #include "Model.h"
+#include "VertexArrayObject.h"
+#include <GL/glew.h>
+
 
 using namespace std;
 
+
+Model::Model(VertexArrayObject* vao, int vertexCount)
+    : vao(vao), vertexCount(vertexCount)
+{
+}
+
+void Model::Draw() const
+{
+    vao->Bind();
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+}
+
+
+/*
 // Model je objekt v programu, kterı drí informace o tvaru, barvách, texturních souøadnicích, a také VBO/VAO
 //    Obsahuje:
 //  - Vrcholy(verticles)
@@ -12,13 +30,10 @@ using namespace std;
 //  - 1. model = trojúhelník
 //  - 2. model = ètverec
 //  -> Kadı model má vlastní data a mùe mít i jinı shader (napø. fialovı trojúhelník, ètverec - barvy podle pozice)
-
 // JAK SPOLU SOUVISÍ MODEL A SHADER
 //  - Model OBSAHUJE DATA a metody k vykreslení objektu
 //  - Shader URÈUJE, JAK SE tato data vizuálnì ZOBRAZÍ
-
 //  "... pouij tento shader a vykresli tento model..."
-
 //VBO - pamì na GPU, kde jsou uoené vrcholy
 //VAO - definuje JAK OpenGL ÈTE VBO = kterı vertex nı hají atributy
 
@@ -55,6 +70,7 @@ void Model::initialize(const vector<float>& vertices, int vertexSize)
     // Aktivujeme VBI ori typ GL_ARRAY_BUFFER => všechny operace na GL_ARRAY_BUFFER se vztahují k tomuto VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);                                                                   // GL_ARRAY_BUFFER = typ bufferu pro vertex data (pozice, barvy, normály,..)
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);      // nahrajeme data do GPU  
+    /*
     // vertices.size() * sizeof(float)  - kolik bajtù dat chceme poslat 
     // vertices.data()                  - ukazatal na data z vektoru vertices
     // GL_STATIS_DRAW                   - informuje OpenGL, e data NEBUDOU ÈASTO MÌNÌNA a budou pouita hlavnì pro kreslení
@@ -63,32 +79,35 @@ void Model::initialize(const vector<float>& vertices, int vertexSize)
     // VBO                              = samotná data vrcholù uloená v GPU
     // glGenBuffers a glBindBuffer      = vytvoøení a aktivace bufferu
     // glBufferData                     = naplnìní bufferu daty 
+    */
 
 
 
     // ******** ZDE SE OPENGL UÈÍ, JAK MÁ ÈÍST MÁ DATA z VBO, kdy bude kreslit model 
 
     // pøedpokládáme 3D pozici + pøípadnì další atributy
-    glEnableVertexAttribArray(0);           // aktivuje atribut è. 0 - shader mùe èíst data z toho vstupu, standardnì to bıvá pozice vrcholu (vec3 position ve vertex shaderu)
+ /*   glEnableVertexAttribArray(0);           // aktivuje atribut è. 0 - shader mùe èíst data z toho vstupu, standardnì to bıvá pozice vrcholu (vec3 position ve vertex shaderu)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexSize * sizeof(float), (void*)0);
-
+    /*
     // 0                                - èíslo atributu (musí odpovídat tomu, co oèekává shader - layout (location = 0) ve vertex shaderu)
     // 3                                - kolik hodnot tvoøí jeden atribut - tady 3, tedy x,y,z souøadnice
     // GL_FLOAT                         - typ dat v bufferu
     // GL_FALSE                         - nemáme normalizovat hodnoty, ale pouít je tak, jak jsou 
     // vertexSize * sizeof(float)       - velikost jednoho vrcholu v bajtech - tzv. stride
     // (void)0*                         - offset - zaèínáme hned od zaèátku bifferu
-
+    */
 
 
     // pokud by byly další atributy na jeden vrchol (barvy, normály, texCoords)
-    if (vertexSize > 3) {
+  /*  if (vertexSize > 3) {
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, vertexSize - 3, GL_FLOAT, GL_FALSE, vertexSize * sizeof(float), (void*)(3 * sizeof(float)));
+        /*
         // atribut è. 1
         // vertexSize - 3               = poèet zbıvajících hodnot po pozici 
         // (void*) (3*sizeof(float))    - data zaèínají a po prvních tøech floatech (tedy po x,y,z)
-    }
+        */
+   /* }
 
     glBindVertexArray(0);               // odpojit, uklidit 
 }
@@ -99,3 +118,6 @@ void Model::draw()
     glDrawArrays(GL_TRIANGLES, 0, vertexCount); // samotné vykreslení
     glBindVertexArray(0);               // odpojí, uklidí 
 }
+
+
+*/

@@ -1,8 +1,11 @@
+// Shader.h
 #pragma once
 
 #include <GL/glew.h>
 #include <string>
 #include <iostream>
+#include <glm/glm.hpp>
+
 
 class Shader {
 public:
@@ -17,6 +20,8 @@ public:
 
     // Vrátí ID shader programu (pokud potøebuješ pro debug apod.)
     GLuint getProgramID() const;
+
+    void SetMatrix4(const char* name, const glm::mat4& matrix);
 
 private:
     GLuint programID;

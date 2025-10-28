@@ -6,6 +6,9 @@
 #include <vector>
 #include <string>
 #include "Shader.h" 
+#include "VertexArrayObject.h"
+#include "VertexBufferObject.h"
+#include "Model.h"
 
 class Application {
 public:
@@ -26,18 +29,36 @@ private:
     GLFWwindow* window;
 
     // cvièení 2
-    GLuint VAO_triangle, VBO_triangle;
-    GLuint VAO_square, VBO_square;
+    //GLuint VAO_triangle;
+    //GLuint VBO_triangle;
+    //GLuint VAO_square;
+    //GLuint VBO_square;
+
+    VertexArrayObject* vao_triangle;
+    VertexBufferObject* vbo_triangle;
+
+    VertexArrayObject* vao_square;
+    VertexBufferObject* vbo_square;
+
     // Ukazatele na shadery
     Shader* triangleShader;
     Shader* squareShader;
 
     // cvièení 3
-    GLuint VAO_cv3, VBO_cv3;
+    //GLuint VAO_cv3, VBO_cv3;
+    VertexArrayObject* vao_cv3;
+    VertexBufferObject* vbo_cv3;
     Shader* cv3Shader;
 
     // cvièení 3 - koule 
-    GLuint VAO_sphere, VBO_sphere;
+    //GLuint VAO_sphere, VBO_sphere;
+    VertexArrayObject* vao_sphere;
+    VertexBufferObject* vbo_sphere;
     Shader* sphereShader;
     Shader* sphereTransShader;
+
+    Model* modelTriangle;
+    Model* modelSquare;
+    Model* modelSphere;
+
 };
