@@ -6,9 +6,9 @@
 class Model
 {
 public:
-    Model(VertexArrayObject* vao, int vertexCount);
+    Model(VertexArrayObject* vao, int vertexCount) : vao(vao), vertexCount(vertexCount) {};
     void Draw() const;
 private:
-    VertexArrayObject* vao;
+    VertexArrayObject* vao = nullptr;
     int vertexCount;
 };

@@ -6,14 +6,9 @@
 
 using namespace std;
 
-
-Model::Model(VertexArrayObject* vao, int vertexCount)
-    : vao(vao), vertexCount(vertexCount)
-{
-}
-
 void Model::Draw() const
 {
+    if (!vao) return;
     vao->Bind();
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }

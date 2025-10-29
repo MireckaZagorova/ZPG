@@ -134,6 +134,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBufferObject.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="gift.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="plain.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="sphere.h" />
     <ClInclude Include="suzi_flat.h" />

@@ -15,6 +15,11 @@ public:
     GLuint getProgramID() const;
 
     void SetMatrix4(const char* name, const glm::mat4& matrix);
+    void SetFloat(const char* name, float value);
+    void SetInt(const char* name, int value);
+    void SetVec3(const char* name, const glm::vec3& value);
+    void SetBool(const char* name, bool value);
+
 
 private:
     GLuint programID;

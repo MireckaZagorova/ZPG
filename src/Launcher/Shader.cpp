@@ -68,3 +68,24 @@ void Shader::SetMatrix4(const char* name, const glm::mat4& matrix)
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
+void Shader::SetFloat(const char* name, float value)
+{
+    GLint loc = glGetUniformLocation(programID, name);
+    if (loc == -1) return;                // když uniform v tom shaderu není, nic neøeším
+    glUniform1f(loc, value);
+}
+
+void Shader::SetInt(const char* name, int value)
+{
+    glUniform1i(glGetUniformLocation(programID, name), value);
+}
+
+void Shader::SetVec3(const char* name, const glm::vec3& value)
+{
+    glUniform3fv(glGetUniformLocation(programID, name), 1, glm::value_ptr(value));
+}
+
+void Shader::SetBool(const char* name, bool value)
+{
+    glUniform1i(glGetUniformLocation(programID, name), (int)value);
+}
